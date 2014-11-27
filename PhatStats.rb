@@ -1,39 +1,37 @@
 require 'rubygems'
-
 require 'net/http'
-
 require 'sinatra'
-
 require 'open-uri'
-
 require 'rss'
-
 require 'json'
-
 require 'sinatra/cross_origin'
-
 require 'xmlsimple'
+require 'infinispan-ruby-client'
 
 enable :sessions
 
 configure do
 
   $i=0
-
-  @@nflplayers = Net::HTTP.get(URI.parse("http://www.fantasyfootballnerd.com/service/players/json/u9g87qqy69ux/")).to_s
+  $http = Net::HTTP.new('localhost', 8080)
+  $http.post('/rest/default/nflplayers' ,Net::HTTP.get(URI.parse("http://www.fantasyfootballnerd.com/service/players/json/u9g87qqy69ux/")).to_s,  {"Content-Type" => "application/json"})
+  $http.post('/rest/default/nflteams' ,Net::HTTP.get(URI.parse('http://www.fantasyfootballnerd.com/service/nfl-teams/json/u9g87qqy69ux/')).to_s,  {"Content-Type" => "application/json"})
+ # @@nflplayers = Net::HTTP.get(URI.parse("http://www.fantasyfootballnerd.com/service/players/json/u9g87qqy69ux/")).to_s
 #  json_result =JSON.parse(@@nflplayers)
 end
 
 get '/NFLTeams' do
 
   cross_origin
-  get_nfl_resource 'http://www.fantasyfootballnerd.com/service/nfl-teams/json/u9g87qqy69ux/'
+  $http = Net::HTTP.new('localhost', 8080)
+  $http.get("/rest/default/nflteams").body
 end
 
 get '/NFLPlayers' do
 
   cross_origin
-  @@nflplayers
+  $http.get("/rest/default/nflplayers").body
+  #@@nflplayers
 end
 
 get '/Latest' do
