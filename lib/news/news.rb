@@ -1,6 +1,6 @@
-require 'util/JSONable'
+require 'json'
 
-class News < JSONable
+class News
 
 
   def initialize(_headline, _description, _author, _image)
@@ -27,5 +27,12 @@ class News < JSONable
   def get_image
     @image
   end
+
+ def to_json(*a)
+    {
+      "headline" => @headline, "description" => @description , "author" => @author , "image" => @image
+    }.to_json(*a)
+  end
+
 
 end

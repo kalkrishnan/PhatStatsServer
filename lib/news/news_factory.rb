@@ -1,4 +1,5 @@
 require 'set'
+require_relative 'news'
 
 class NewsFactory
 
@@ -17,20 +18,25 @@ class NewsFactory
     end
   end
 
-  def json_news
-    String news = "{\"news\":[";
-    i = 0;
-    while(!@news.empty? && i<5)
-      news = news + @news[i].to_json + ",";
-    end
-    news = news[0..-2] +"]}"
-  end
 
   def build_news_repo
     json_news = JSON.parse(get_rss_feed 'http://www.nfl.com/rss/rsslanding?searchString=home')
     json_news["entry"].each do |entry|
       @news.add(News.new(entry["title"],entry["summary"],entry["creator"],entry["images"]))
     end
+
+    get_json_news
+  end
+
+  def get_json_news
+    String news = "[{\"topic\":\"news\",\"items\":[";
+    i = 0;
+
+   @news.each{|news_entry|
+
+      news = news + news_entry.to_json+ ",";
+    }
+    news = news[0..-2] +"]}]"
   end
 
   def get_rss_feed(url)
