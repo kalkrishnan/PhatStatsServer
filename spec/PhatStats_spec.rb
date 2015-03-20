@@ -1,3 +1,4 @@
+require 'rspec/autorun'
 
 require 'spec_helper'
 
